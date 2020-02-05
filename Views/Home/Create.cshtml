@@ -1,0 +1,58 @@
+﻿
+@Scripts.Render("~/bundles/bootstrap")
+
+<div>
+    <br/>
+    <b>ADD new contact</b>
+</div>
+
+<div>
+    <div class="col-md-2">FirstName:</div> 
+    <div class="col-md-10"><input type="text" id="textFirstName" value="John"/></div>
+</div>
+<div>
+    <div class="col-md-2">LastName:</div>
+    <div class="col-md-10"><input type="text" id="textLastName" value="Doe" /></div>
+</div>
+<div>
+    <div class="col-md-2">Address:</div>
+    <div class="col-md-10"><input type="text" id="textAddress" value="Koper123"/></div>
+</div>
+<div>
+    <div class="col-md-2">PhoneNum:</div>
+    <div class="col-md-10"><input type="text" id="textPhoneNum" value="031878792" /></div>
+</div>
+<div>
+    <input type="button" id="AddContact" value="Add contact" class="btn btn-success" /> <br />
+</div>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#AddContact").click(function () {
+            $.ajax({
+                url: 'http://localhost:43854/api/contacts/AddContact',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    PhoneNum: $('#textPhoneNum').val(),
+                    FirstName: $('#textFirstName').val(),
+                    LastName: $('#textLastName').val(),
+                    Address: $('#textAddress').val()
+                }),
+                dataType: "json",
+                success: function (response) {
+                    alert("Contact added\nFirstName: " + response.FirstName + ".\nLastName: " + response.LastName + "\nAddress: " + response.Address + "\nPhoneNum: " + response.PhoneNum);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        });
+    });
+</script>
+
