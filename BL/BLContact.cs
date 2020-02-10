@@ -62,8 +62,7 @@ namespace PhoneBooth.BL
                     {
                         foreach (var failure in results.Errors)
                         {
-                            throw new Exception("Property " + failure.PropertyName + " failed validation. Error was: " +
-                                                failure.ErrorMessage);
+                            throw new Exception($"Property {failure.PropertyName} failed validation. Error was: {failure.ErrorMessage}");
                         }
                     }
                 }
@@ -94,8 +93,8 @@ namespace PhoneBooth.BL
                     {
                         foreach (var failure in results.Errors)
                         {
-                            throw new Exception("Property " + failure.PropertyName + " failed validation. Error was: " +
-                                                failure.ErrorMessage);
+                            throw new Exception(
+                                $"Property {failure.PropertyName} failed validation. Error was: {failure.ErrorMessage}");
                         }
                     }
                 }
@@ -143,8 +142,8 @@ namespace PhoneBooth.BL
                         {
                             foreach (var failure in results.Errors)
                             {
-                                throw new Exception("Property " + failure.PropertyName + " failed validation. Error was: " +
-                                                    failure.ErrorMessage);
+                                throw new Exception(
+                                    $"Property {failure.PropertyName} failed validation. Error was: {failure.ErrorMessage}");
                             }
                         }
                     }
