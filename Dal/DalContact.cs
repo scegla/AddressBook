@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
+using System.Data.Entity.Validation;
 using System.Linq;
+using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.Ajax.Utilities;
 using PhoneBooth.Dal.Interfaces;
 using PhoneBooth.Models;
 
@@ -23,57 +29,27 @@ namespace PhoneBooth.Dal
 
         public List<Contact> Search(ContactSearch search)
         {
-            if (search != null)
+            try
             {
-                if (search.Id > 0)
+                if (search != null)
                 {
-                    return db.Contacts.Where(x => x.Id == search.Id).ToList();
-                }
-                string sqlQueryWhere = "";
-                if (!String.IsNullOrEmpty(search.Address))
-                {
-                    sqlQueryWhere += String.Format("ADDRESS LIKE '{0}%'", search.Address);
-                }
-                if (!String.IsNullOrEmpty(search.FirstName))
-                {
-                    if (sqlQueryWhere != "")
+                    if (search.Id > 0)
                     {
-                        sqlQueryWhere += " OR ";
+                        return db.Contacts.Where(x => x.Id == search.Id).ToList();
                     }
-                    sqlQueryWhere += String.Format("FIRSTNAME LIKE '{0}%'", search.FirstName);
-                }
-                if (!String.IsNullOrEmpty(search.LastName))
-                {
-                    if (sqlQueryWhere != "")
-                    {
-                        sqlQueryWhere += " OR ";
-                    }
-                    sqlQueryWhere += String.Format("LASTNAME LIKE '{0}%'", search.LastName);
-                }
-                if (!String.IsNullOrEmpty(search.Address))
-                {
-                    if (sqlQueryWhere != "")
-                    {
-                        sqlQueryWhere += " OR ";
-                    }
-                    sqlQueryWhere += String.Format("ADDRESS LIKE '{0}%'", search.Address);
-                }
-                if (!String.IsNullOrEmpty(search.PhoneNum))
-                {
-                    if (sqlQueryWhere != "")
-                    {
-                        sqlQueryWhere += " OR ";
-                    }
-                    sqlQueryWhere += String.Format("PHONENUM LIKE '{0}%'", search.PhoneNum);
-                }
 
-                if (sqlQueryWhere != "")
-                {
-                    return db.Contacts.SqlQuery(String.Format("SELECT * FROM CONTACTS WHERE {0}", sqlQueryWhere)).ToList();
+                    return db.Contacts.Where(p =>
+                            !p.FirstName.Equals("") && p.FirstName.ToLower().Contains(search.FirstName) &&
+                            !p.LastName.Equals("") && p.LastName.ToLower().Contains(search.LastName) &&
+                            !p.PhoneNum.Equals("") && p.PhoneNum.ToLower().Contains(search.PhoneNum) &&
+                            !p.Address.Equals("") && p.Address.ToLower().Contains(search.Address))
+                        .ToList();
                 }
-                return db.Contacts.ToList();
             }
-
+            catch (Exception e)
+            {
+                throw new Exception(e.ToString());
+            }
             return null;
         }
 
@@ -81,7 +57,12 @@ namespace PhoneBooth.Dal
         {
             if (ContactExists(id))
             {
-                return db.Contacts.Find(id);
+                var cont = db.Contacts.Find(id);
+                if (cont == null)
+                {
+                    throw new Exception($"Contact with id: {id} doesn't exists");
+                }
+                return cont;
             }
             return null;
         }
