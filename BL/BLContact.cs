@@ -4,6 +4,8 @@ using System.Data.Entity.Core.Metadata.Edm;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web.WebPages;
+using FluentValidation;
+using FluentValidation.Results;
 using PhoneBooth.Dal;
 using PhoneBooth.Dal.Interfaces;
 using PhoneBooth.Models;
@@ -13,6 +15,8 @@ namespace PhoneBooth.BL
     public class BLContact
     {
         private IDalContact _dalContact;
+        ContactValidator validator = new ContactValidator();
+        ContactSearchValidator validatorSearch = new ContactSearchValidator();
         public BLContact(ContactsContext cc)
         {
             _dalContact = new DalContact(cc);
@@ -46,13 +50,27 @@ namespace PhoneBooth.BL
         {
             try
             {
-                //Validation
-                if (!IsValid(cont))
+                ValidationResult results = validator.Validate(cont);
+                if (results.IsValid)
                 {
-                    throw new Exception("Input not allowed");
+                    _dalContact.Add(cont);
                 }
-
-                _dalContact.Add(cont);
+                else
+                {
+                    //!results.IsValid
+                    if (results.Errors != null && results.Errors.Count > 0)
+                    {
+                        foreach (var failure in results.Errors)
+                        {
+                            throw new Exception("Property " + failure.PropertyName + " failed validation. Error was: " +
+                                                failure.ErrorMessage);
+                        }
+                    }
+                }
+            }
+            catch (ValidationException e)
+            {
+                throw new Exception($"validation error: {e.ToString()}");
             }
             catch (Exception ex)
             {
@@ -64,13 +82,29 @@ namespace PhoneBooth.BL
         {
             try
             {
-                //Validation
-                if (!IsValid(cont))
+                ValidationResult results = validator.Validate(cont);
+                if (results.IsValid)
                 {
-                    throw new Exception("Input not allowed");
+                    _dalContact.Update(cont);
+                }
+                else
+                {
+                    //!results.IsValid
+                    if (results.Errors != null && results.Errors.Count > 0)
+                    {
+                        foreach (var failure in results.Errors)
+                        {
+                            throw new Exception("Property " + failure.PropertyName + " failed validation. Error was: " +
+                                                failure.ErrorMessage);
+                        }
+                    }
                 }
 
                 _dalContact.Update(cont);
+            }
+            catch (ValidationException e)
+            {
+                throw new Exception($"validation error: {e.ToString()}");
             }
             catch (Exception ex)
             {
@@ -95,12 +129,31 @@ namespace PhoneBooth.BL
             try
             {
                 //Validation
-                if (!IsValid(cs))
+                if (cs != null)
                 {
-                    throw new Exception("Input not allowed");
+                    ValidationResult results = validatorSearch.Validate(cs);
+                    if (results.IsValid)
+                    {
+                        return _dalContact.Search(cs);
+                    }
+                    else
+                    {
+                        //!results.IsValid
+                        if (results.Errors != null && results.Errors.Count > 0)
+                        {
+                            foreach (var failure in results.Errors)
+                            {
+                                throw new Exception("Property " + failure.PropertyName + " failed validation. Error was: " +
+                                                    failure.ErrorMessage);
+                            }
+                        }
+                    }
                 }
-
-                return _dalContact.Search(cs);
+                return null;
+            }
+            catch (ValidationException e)
+            {
+                throw new Exception($"validation error: {e.ToString()}");
             }
             catch (Exception ex)
             {
@@ -108,6 +161,7 @@ namespace PhoneBooth.BL
             }
         }
 
+        [Obsolete]
         private bool IsValid(ContactSearch cs)
         {
             var pattern = @"^[a-zA-Z0-9 ]*$";
@@ -149,6 +203,7 @@ namespace PhoneBooth.BL
             return true;
         }
 
+        [Obsolete]
         private bool IsValid(Contact cs)
         {
             var pattern = @"^[a-zA-Z0-9 ]*$";
