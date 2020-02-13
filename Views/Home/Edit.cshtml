@@ -1,68 +1,45 @@
-﻿@Scripts.Render("~/bundles/bootstrap")
+﻿@model PhoneBooth.Models.Contact
 
-<div>
-    <br />
-    <b>EDIT new contact</b>
-</div>
+@Scripts.Render("~/bundles/bootstrap")
 
-<div>
-    <div class="col-md-2">Id:</div>
-    <div class="col-md-10">
-        <input type="text" id="textId" value="1" />
+@using (Html.BeginForm())
+{
+<div class="row" ng-controller="TestMy">
+    <div>
+        <b>EDIT contact</b><br /><br />
     </div>
-</div>
-<div>
-    <div class="col-md-2">FirstName:</div>
-    <div class="col-md-10">
-        <input type="text" id="textFirstName" value="John" />
+
+    <div>
+        @Html.LabelFor(model => model.Id):
+        @Html.TextBoxFor(model => model.Id, new { ng_model = "editId" })
+        @Html.ValidationMessageFor(model => model.Id)
     </div>
-</div>
-<div>
-    <div class="col-md-2">LastName:</div>
-    <div class="col-md-10"><input type="text" id="textLastName" value="Doe" /></div>
-</div>
-<div>
-    <div class="col-md-2">Address:</div>
-    <div class="col-md-10"><input type="text" id="textAddress" value="Koper123" /></div>
-</div>
-<div>
-    <div class="col-md-2">PhoneNum:</div>
-    <div class="col-md-10"><input type="text" id="textPhoneNum" value="3232178136178" /></div>
-</div>
+    <div>
+        @Html.LabelFor(model => model.FirstName):
+        @Html.TextBoxFor(model => model.FirstName, new { ng_model = "editFirstName" })
+        @Html.ValidationMessageFor(model => model.FirstName)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.LastName):
+        @Html.TextBoxFor(model => model.LastName, new { ng_model = "editLastName" })
+        @Html.ValidationMessageFor(model => model.LastName)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Address):
+        @Html.TextBoxFor(model => model.Address, new { ng_model = "editAddress" })
+        @Html.ValidationMessageFor(model => model.Address)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.PhoneNum):
+        @Html.TextBoxFor(model => model.PhoneNum, new { ng_model = "editPhoneNum" })
+        @Html.ValidationMessageFor(model => model.PhoneNum)
+    </div>
 
-<div>
-    <input type="button" id="EditContact" value="Edit contact" class="btn btn-primary" /> <br />
+    <button name="Edit" value="Edit" type="submit" class="btn btn-warning">Validate</button>
+    <button type="button" class="btn btn-primary" ng-click="editSave()">Save contact</button>
+
 </div>
+}
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript">
-
-    $(document).ready(function () {
-        $("#EditContact").click(function () {
-            $.ajax({
-                url: 'http://localhost:43854/api/contacts/EditContact',
-                type: "POST",
-                contentType: "application/json",
-                //data: contact2,
-                data: JSON.stringify({
-                    Id: $('#textId').val(),
-                    PhoneNum: $('#textPhoneNum').val(),
-                    FirstName: $('#textFirstName').val(),
-                    LastName: $('#textLastName').val(),
-                    Address: $('#textAddress').val()
-                }),
-                dataType: "json",
-                success: function (response) {
-                    alert("Contact updated\nId" + response.Id + "\nFirstName: " + response.FirstName + ".\nLastName: " + response.LastName + "\nAddress: " + response.Address + "\nPhoneNum: " + response.PhoneNum);
-                },
-                failure: function (response) {
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    alert(response.responseText);
-                }
-            });
-        });
-    });
-</script>
+<script src="~/Scripts/ContactBook/HomeIndexController.js"></script>
 
