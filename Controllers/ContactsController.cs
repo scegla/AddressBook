@@ -27,7 +27,14 @@ namespace PhoneBooth.Controllers
         [System.Web.Http.HttpGet]
         public List<Contact> GetContacts()
         {
-            return _blContact.GetAll();
+            try
+            {
+                return _blContact.GetAll();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception: " + e.Message);
+            }
         }
 
         [System.Web.Http.Route("api/contacts/{id}")]
@@ -35,7 +42,14 @@ namespace PhoneBooth.Controllers
         [System.Web.Http.HttpGet]
         public Contact GetContact(int id)
         {
-            return _blContact.Get(id);
+            try
+            {
+                return _blContact.Get(id);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception: " + e.Message);
+            }
         }
 
         [System.Web.Http.Route("api/contacts/AddContact")]
@@ -43,9 +57,16 @@ namespace PhoneBooth.Controllers
         [System.Web.Http.HttpPost]
         public Contact AddContact(Contact contact)
         {
-            _blContact.Add(contact);
+            try
+            {
+                _blContact.Add(contact);
 
-            return contact;
+                return contact;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception: " + e.Message);
+            }
         }
 
         [ResponseType(typeof(Contact))]
@@ -53,7 +74,14 @@ namespace PhoneBooth.Controllers
         [System.Web.Http.HttpDelete]
         public void DeleteContact(int id)
         {
-            _blContact.Delete(id);
+            try
+            {
+                _blContact.Delete(id);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception: " + e.Message);
+            }
         }
 
         [System.Web.Http.Route("api/contacts/EditContact")]
@@ -61,9 +89,16 @@ namespace PhoneBooth.Controllers
         [System.Web.Http.HttpPost]
         public Contact EditContact(Contact contact)
         {
-            _blContact.Update(contact);
+            try
+            {
+                _blContact.Update(contact);
 
-            return contact;
+                return contact;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception: " + e.Message);
+            }
         }
 
         [System.Web.Http.Route("api/contacts/SearchContact")]
@@ -71,7 +106,14 @@ namespace PhoneBooth.Controllers
         [System.Web.Http.HttpPost]
         public List<Contact> SearchContact(ContactSearch contact)
         {
-            return _blContact.Search(contact);
+            try
+            {
+                return _blContact.Search(contact);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception: " + e.Message);
+            }
         }
 
         protected override void Dispose(bool disposing)
