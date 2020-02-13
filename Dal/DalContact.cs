@@ -39,10 +39,10 @@ namespace PhoneBooth.Dal
                     }
 
                     return db.Contacts.Where(p =>
-                            !p.FirstName.Equals("") && p.FirstName.ToLower().Contains(search.FirstName) &&
-                            !p.LastName.Equals("") && p.LastName.ToLower().Contains(search.LastName) &&
-                            !p.PhoneNum.Equals("") && p.PhoneNum.ToLower().Contains(search.PhoneNum) &&
-                            !p.Address.Equals("") && p.Address.ToLower().Contains(search.Address))
+                            p.FirstName.ToLower().Contains(search.FirstName) &&
+                            p.LastName.ToLower().Contains(search.LastName) &&
+                            p.Address.ToLower().Contains(search.Address) &&
+                            p.PhoneNum.ToLower().Contains(search.PhoneNum) )
                         .ToList();
                 }
             }
@@ -71,12 +71,12 @@ namespace PhoneBooth.Dal
         {
             if (ContactExists(contact.Id))
             {
-                throw new Exception(String.Format("Contact with id: {0} already exists", contact.Id));
+                throw new Exception($"Contact with id: {contact.Id} already exists");
             }
 
             if (PhoneNumExists(contact.PhoneNum))
             {
-                throw new Exception(String.Format("Contact with phoneNum: {0} already exists", contact.PhoneNum));
+                throw new Exception($"Contact with phoneNum: {contact.PhoneNum} already exists");
             }
 
             db.Contacts.Add(contact);
@@ -88,7 +88,7 @@ namespace PhoneBooth.Dal
             Contact contact = db.Contacts.Find(id);
             if (contact == null)
             {
-                throw new Exception(String.Format("Contact with id: {0} doesn't exists", id));
+                throw new Exception($"Contact with id: {id} doesn't exists");
             }
 
             db.Contacts.Remove(contact);
@@ -100,7 +100,7 @@ namespace PhoneBooth.Dal
         {
             if (!ContactExists(contact.Id))
             {
-                throw new Exception(String.Format("Contact with id: {0} doesn't exists", contact.Id));
+                throw new Exception($"Contact with id: {contact.Id} doesn't exists");
             }
 
             db.Contacts.AddOrUpdate(contact);
@@ -112,12 +112,12 @@ namespace PhoneBooth.Dal
             db.Dispose();
         }
 
-        private bool ContactExists(int id)
+        public bool ContactExists(int id)
         {
             return db.Contacts.Count(e => e.Id == id) > 0;
         }
 
-        private bool PhoneNumExists(string phoneNum)
+        public bool PhoneNumExists(string phoneNum)
         {
             return db.Contacts.Count(e => e.PhoneNum == phoneNum) > 0;
         }
